@@ -6,6 +6,7 @@ class LocationModel {
   final String address;
   final String city;
   final double latitude;
+  final double distance;
   final double longitude;
   final DateTime createdAt;
 
@@ -14,6 +15,7 @@ class LocationModel {
     required this.address,
     required this.city,
     required this.latitude,
+    required this.distance,
     required this.longitude,
     required this.createdAt,
   });
@@ -21,15 +23,19 @@ class LocationModel {
   // Factory constructor untuk membuat instance LocationModel dari JSON
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
-      locationName: json['location_name'] ?? 'Nama Tidak Diketahui',
+      locationName:
+          json['location_name'] ?? json['name'] ?? 'Nama Tidak Diketahui',
+
       address: json['address'] ?? 'Alamat Tidak Diketahui',
       city: json['city'] ?? 'Kota Tidak Diketahui',
-      latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
-      longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
+      latitude: (json['latitude'] ?? json['lat'] as num?)?.toDouble() ?? 0.0,
+      longitude: (json['longitude'] ?? json['lon'] as num?)?.toDouble() ?? 0.0,
+      distance: json['distance'] != null
+          ? (json['distance'] as num).toDouble()
+          : 0.0,
       createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
     );
   }
 
-  // Helper untuk mendapatkan koordinat sebagai objek LatLng
   LatLng get point => LatLng(latitude, longitude);
 }
