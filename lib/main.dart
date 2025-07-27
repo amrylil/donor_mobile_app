@@ -1,10 +1,13 @@
-import 'package:donor_mobile_app/screens/auth/login_screen.dart';
+import 'package:donor_mobile_app/helpers/auth_guard.dart';
 import 'package:flutter/material.dart';
-import 'package:donor_mobile_app/screens/auth/index_screen.dart';
-import 'package:donor_mobile_app/screens/auth/register_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:donor_mobile_app/widgets/main_navigation.dart';
+import 'package:donor_mobile_app/screens/auth/login_screen.dart';
+import 'package:donor_mobile_app/screens/auth/register_screen.dart';
+import 'package:donor_mobile_app/screens/auth/index_screen.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -20,13 +23,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: '/auth',
+      home: const AuthGuard(),
       routes: {
-        '/': (context) => const MainScreen(), // atau bisa AuthIndexPage()
-        '/register': (context) => const RegisterPage(),
         '/login': (context) => const LoginPage(),
+        '/register': (context) => const RegisterPage(),
         '/auth': (context) => const AuthIndexPage(),
-        // tambahkan route lain sesuai kebutuhan
+        '/home': (context) => const MainScreen(),
       },
       debugShowCheckedModeBanner: false,
     );

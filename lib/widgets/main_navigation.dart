@@ -1,5 +1,6 @@
 import 'package:donor_mobile_app/screens/home_screen.dart';
 import 'package:donor_mobile_app/screens/lokasi_screen.dart';
+import 'package:donor_mobile_app/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math' as math;
@@ -49,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
     BloodDonationHomeScreen(),
     MapScreen(),
     ChatPage(),
-    FolderPage(),
+    ProfileScreen(),
   ];
 
   // Daftar title untuk setiap halaman
@@ -66,120 +67,87 @@ class _MainScreenState extends State<MainScreen> {
       backgroundColor: const Color(0xFFF8FAFC),
       body: Column(
         children: [
-          // Custom Modern Header
           Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF1E293B), Color(0xFF334155)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.9),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: SafeArea(
               bottom: false,
               child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 10,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Header row dengan profile dan notifikasi
+                    // App name section
+                    const Text(
+                      'Darah Sipatuo',
+                      style: TextStyle(
+                        color: Color(0xFF1F2937),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    // Action buttons
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Profile section
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: CircleAvatar(
-                                radius: 20,
-                                backgroundColor: Colors.white.withOpacity(0.1),
-                                child: const Icon(
-                                  Icons.person_rounded,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              // Notifikasi action
+                            },
+                            icon: Stack(
                               children: [
-                                const Text(
-                                  'Ulil Abshar',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                const Icon(
+                                  Icons.notifications_rounded,
+                                  color: Color(0xFF6B7280),
+                                  size: 22,
                                 ),
-                                Text(
-                                  'Pendonor Aktif',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.7),
-                                    fontSize: 12,
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFEF4444),
+                                      shape: BoxShape.circle,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                          ],
+                          ),
                         ),
-                        // Action buttons
-                        Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: IconButton(
-                                onPressed: () {
-                                  // Notifikasi action
-                                },
-                                icon: Stack(
-                                  children: [
-                                    const Icon(
-                                      Icons.notifications_rounded,
-                                      color: Colors.white,
-                                      size: 22,
-                                    ),
-                                    Positioned(
-                                      top: 0,
-                                      right: 0,
-                                      child: Container(
-                                        width: 8,
-                                        height: 8,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFEF4444),
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                        const SizedBox(width: 8),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              // Settings action
+                            },
+                            icon: const Icon(
+                              Icons.settings_rounded,
+                              color: Color(0xFF6B7280),
+                              size: 22,
                             ),
-                            const SizedBox(width: 8),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: IconButton(
-                                onPressed: () {
-                                  // Settings action
-                                },
-                                icon: const Icon(
-                                  Icons.settings_rounded,
-                                  color: Colors.white,
-                                  size: 22,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
@@ -244,8 +212,8 @@ class FloatingNavBar extends StatelessWidget {
         inactiveIcon: Icons.chat_bubble_outline_rounded,
       ),
       NavItem(
-        activeIcon: Icons.history_rounded,
-        inactiveIcon: Icons.history_outlined,
+        activeIcon: Icons.person_rounded,
+        inactiveIcon: Icons.person_rounded,
       ),
     ];
 

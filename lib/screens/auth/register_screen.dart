@@ -218,8 +218,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             TextButton(
                               onPressed: () {
-                                // Navigasi kembali ke halaman login
-                                Navigator.pop(context);
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  '/login',
+                                );
                               },
                               child: Text(
                                 'Masuk di sini',

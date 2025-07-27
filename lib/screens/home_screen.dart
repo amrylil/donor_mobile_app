@@ -1,3 +1,4 @@
+import 'package:donor_mobile_app/services/profile_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -17,9 +18,6 @@ class BloodDonationHomeScreen extends StatelessWidget {
             children: [
               // 1. Modern Header Section
               _buildModernHeaderSection(context, textTheme),
-
-              // 2. Enhanced Quick Stats
-              _buildEnhancedQuickStatsSection(textTheme),
 
               // 3. Modern Quick Actions
               _buildModernQuickActionsSection(textTheme),
@@ -46,88 +44,102 @@ class BloodDonationHomeScreen extends StatelessWidget {
 
   // 1. Modern Header Section
   Widget _buildModernHeaderSection(BuildContext context, TextTheme textTheme) {
-    return Container(
-      margin: const EdgeInsets.all(20.0),
-      padding: const EdgeInsets.all(24.0),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E293B), Color(0xFF334155)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    "ANjing",
-                    style: textTheme.bodySmall?.copyWith(
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Selamat Pagi,',
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: Colors.white70,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                Text(
-                  'Ulil Abshar! 👋',
-                  style: textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Mari berbagi kebaikan hari ini',
-                  style: textTheme.bodyMedium?.copyWith(color: Colors.white60),
-                ),
-              ],
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: ProfileService.getProfile(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final user = snapshot.data!;
+        final name = user['name'] ?? 'Pengguna';
+
+        return Container(
+          margin: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(24.0),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1E293B), Color(0xFF334155)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 2,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
               ),
-            ),
-            child: const Icon(
-              Icons.bloodtype_rounded,
-              color: Colors.white,
-              size: 32,
-            ),
+            ],
           ),
-        ],
-      ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        user['role'] ?? "user",
+                        style: textTheme.bodySmall?.copyWith(
+                          color: Colors.white70,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Selamat Pagi,',
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    Text(
+                      '$name 👋',
+                      style: textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Mari berbagi kebaikan hari ini',
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: Colors.white60,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 2,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.bloodtype_rounded,
+                  color: Colors.white,
+                  size: 32,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

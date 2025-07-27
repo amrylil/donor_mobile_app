@@ -5,7 +5,7 @@ import 'package:donor_mobile_app/helpers/location_helper.dart'; // pastikan ini 
 
 class LocationService {
   final String _baseUrl =
-      'http://47.237.74.12:8080/api/v1/locations/by-user-location';
+      'https://donor-darah.duckdns.org/api/v1/locations/by-user-location';
 
   Future<List<LocationModel>> fetchLocations() async {
     try {

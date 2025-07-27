@@ -20,6 +20,7 @@ class _MapScreenState extends State<MapScreen> {
   late Future<List<LocationModel>> _locationsFuture;
   Position? _currentPosition;
   bool _isLoadingLocation = true;
+  bool _showList = false;
 
   @override
   void initState() {
@@ -72,7 +73,7 @@ class _MapScreenState extends State<MapScreen> {
           lat,
           lon,
         ) /
-        1000; // Convert to kilometers
+        1000;
   }
 
   void _moveToLocation(LatLng point) {
@@ -93,78 +94,44 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: _buildAppBar(),
-      body: FutureBuilder<List<LocationModel>>(
-        future: _locationsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildLoadingState();
-          }
+      backgroundColor: Colors.grey[50],
+      body: SafeArea(
+        child: FutureBuilder<List<LocationModel>>(
+          future: _locationsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return _buildLoadingState();
+            }
 
-          if (snapshot.hasError) {
-            return _buildErrorState(snapshot.error.toString());
-          }
+            if (snapshot.hasError) {
+              return _buildErrorState(snapshot.error.toString());
+            }
 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return _buildEmptyState();
-          }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return _buildEmptyState();
+            }
 
-          final locations = snapshot.data!;
-          final markers = _buildMarkers(locations);
+            final locations = snapshot.data!;
+            final markers = _buildMarkers(locations);
 
-          return Column(
-            children: [
-              Expanded(flex: 3, child: _buildMapContainer(markers)),
-              _buildDivider(),
-              _buildListHeader(locations.length),
-              Expanded(flex: 2, child: _buildLocationList(locations)),
-            ],
-          );
-        },
-      ),
-    );
-  }
+            return Stack(
+              children: [
+                // Map Container - Full Screen
+                _buildMapView(markers),
 
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      systemOverlayStyle: SystemUiOverlayStyle.dark,
-      title: const Text(
-        'Lokasi Donor Darah',
-        style: TextStyle(
-          color: Color(0xFF1E293B),
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
+                // Top Controls
+                _buildTopControls(),
+
+                // Bottom Sheet Toggle
+                _buildBottomToggle(locations.length),
+
+                // Location List Overlay
+                if (_showList) _buildLocationListOverlay(locations),
+              ],
+            );
+          },
         ),
       ),
-      actions: [
-        Container(
-          margin: const EdgeInsets.only(right: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: IconButton(
-            onPressed: _moveToCurrentLocation,
-            icon: Icon(
-              Icons.my_location_rounded,
-              color: _currentPosition != null
-                  ? const Color(0xFFEF4444)
-                  : Colors.grey[400],
-            ),
-            tooltip: 'Lokasi Saya',
-          ),
-        ),
-      ],
     );
   }
 
@@ -173,14 +140,15 @@ class _MapScreenState extends State<MapScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(Color(0xFFEF4444)),
-            strokeWidth: 3,
-          ),
-          SizedBox(height: 16),
+          CircularProgressIndicator(color: Color(0xFF2563EB), strokeWidth: 2.5),
+          SizedBox(height: 24),
           Text(
             'Memuat lokasi...',
-            style: TextStyle(color: Color(0xFF64748B), fontSize: 16),
+            style: TextStyle(
+              color: Color(0xFF6B7280),
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -189,42 +157,31 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _buildErrorState(String error) {
     return Center(
-      child: Container(
-        margin: const EdgeInsets.all(32),
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+      child: Padding(
+        padding: const EdgeInsets.all(32),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 color: const Color(0xFFEF4444).withOpacity(0.1),
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(20),
               ),
               child: const Icon(
-                Icons.error_outline_rounded,
+                Icons.error_outline,
                 color: Color(0xFFEF4444),
-                size: 48,
+                size: 40,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             const Text(
               'Terjadi Kesalahan',
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E293B),
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF111827),
               ),
             ),
             const SizedBox(height: 8),
@@ -241,42 +198,31 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _buildEmptyState() {
     return Center(
-      child: Container(
-        margin: const EdgeInsets.all(32),
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+      child: Padding(
+        padding: const EdgeInsets.all(32),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.1),
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
-                Icons.location_off_rounded,
+                Icons.location_off,
                 color: Colors.grey[400],
-                size: 48,
+                size: 40,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             const Text(
               'Tidak Ada Lokasi',
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E293B),
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF111827),
               ),
             ),
             const SizedBox(height: 8),
@@ -291,11 +237,303 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  Widget _buildMapView(List<Marker> markers) {
+    return FlutterMap(
+      mapController: _mapController,
+      options: MapOptions(
+        center: _currentPosition != null
+            ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
+            : LatLng(-5.147665, 119.432732),
+        zoom: 13.0,
+        maxZoom: 18.0,
+        minZoom: 10.0,
+      ),
+      children: [
+        TileLayer(
+          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          subdomains: const ['a', 'b', 'c'],
+          userAgentPackageName: 'com.example.donor_mobile_app',
+        ),
+        MarkerLayer(markers: markers),
+      ],
+    );
+  }
+
+  Widget _buildTopControls() {
+    return Positioned(
+      top: 16,
+      left: 16,
+      right: 16,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // My Location Button
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              onPressed: _moveToCurrentLocation,
+              icon: Icon(
+                Icons.my_location,
+                color: _currentPosition != null
+                    ? const Color(0xFF2563EB)
+                    : Colors.grey[400],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomToggle(int locationCount) {
+    return Positioned(
+      bottom: 32,
+      left: 16,
+      right: 16,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              setState(() {
+                _showList = !_showList;
+              });
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFEF4444),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        '$locationCount Lokasi Ditemukan',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF111827),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    _showList
+                        ? Icons.keyboard_arrow_down
+                        : Icons.keyboard_arrow_up,
+                    color: const Color(0xFF6B7280),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocationListOverlay(List<LocationModel> locations) {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.5,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            // Handle
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Lokasi Terdekat',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF111827),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _showList = false;
+                      });
+                    },
+                    icon: const Icon(Icons.close, color: Color(0xFF6B7280)),
+                  ),
+                ],
+              ),
+            ),
+
+            // List
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: locations.length,
+                itemBuilder: (context, index) {
+                  final location = locations[index];
+                  final distance = _calculateDistance(
+                    location.latitude,
+                    location.longitude,
+                  );
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey[200]!),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          setState(() {
+                            _showList = false;
+                          });
+                          _moveToLocation(location.point);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFFEF4444,
+                                  ).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  Icons.bloodtype,
+                                  color: Color(0xFFEF4444),
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      location.locationName,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFF111827),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      location.address,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey[600],
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (_currentPosition != null) ...[
+                                      const SizedBox(height: 6),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.near_me,
+                                            size: 12,
+                                            color: Colors.grey[500],
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '${distance.toStringAsFixed(1)} km',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[500],
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                                color: Colors.grey[400],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   List<Marker> _buildMarkers(List<LocationModel> locations) {
     List<Marker> markers = locations.map((location) {
       return Marker(
-        width: 50.0,
-        height: 50.0,
+        width: 40.0,
+        height: 40.0,
         point: location.point,
         child: GestureDetector(
           onTap: () {
@@ -306,18 +544,19 @@ class _MapScreenState extends State<MapScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFFEF4444), width: 2),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
-                  blurRadius: 8,
+                  blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: const Icon(
-              Icons.bloodtype_rounded,
+              Icons.bloodtype,
               color: Color(0xFFEF4444),
-              size: 28,
+              size: 20,
             ),
           ),
         ),
@@ -328,30 +567,26 @@ class _MapScreenState extends State<MapScreen> {
     if (_currentPosition != null) {
       markers.add(
         Marker(
-          width: 60.0,
-          height: 60.0,
+          width: 44.0,
+          height: 44.0,
           point: LatLng(
             _currentPosition!.latitude,
             _currentPosition!.longitude,
           ),
           child: Container(
             decoration: BoxDecoration(
-              color: const Color(0xFF3B82F6),
+              color: const Color(0xFF2563EB),
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white, width: 3),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
-                  blurRadius: 8,
+                  blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
-            child: const Icon(
-              Icons.person_rounded,
-              color: Colors.white,
-              size: 24,
-            ),
+            child: const Icon(Icons.person, color: Colors.white, size: 20),
           ),
         ),
       );
@@ -360,252 +595,17 @@ class _MapScreenState extends State<MapScreen> {
     return markers;
   }
 
-  Widget _buildMapContainer(List<Marker> markers) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: FlutterMap(
-          mapController: _mapController,
-          options: MapOptions(
-            center: _currentPosition != null
-                ? LatLng(
-                    _currentPosition!.latitude,
-                    _currentPosition!.longitude,
-                  )
-                : LatLng(-5.147665, 119.432732),
-            zoom: 13.0,
-            maxZoom: 18.0,
-            minZoom: 10.0,
-          ),
-          children: [
-            TileLayer(
-              urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              subdomains: const ['a', 'b', 'c'],
-              userAgentPackageName: 'com.example.donor_mobile_app',
-            ),
-            MarkerLayer(markers: markers),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDivider() {
-    return Container(
-      height: 1,
-      margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.transparent,
-            Colors.grey.withOpacity(0.3),
-            Colors.transparent,
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildListHeader(int count) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'Lokasi Terdekat',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E293B),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFFEF4444).withOpacity(0.1),
-                  const Color(0xFFDC2626).withOpacity(0.1),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: const Color(0xFFEF4444).withOpacity(0.2),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.location_on_rounded,
-                  color: const Color(0xFFEF4444),
-                  size: 16,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '$count lokasi',
-                  style: const TextStyle(
-                    color: Color(0xFFEF4444),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLocationList(List<LocationModel> locations) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: locations.length,
-      itemBuilder: (context, index) {
-        final location = locations[index];
-        final distance = _calculateDistance(
-          location.latitude,
-          location.longitude,
-        );
-
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.06),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(20),
-              onTap: () {
-                HapticFeedback.lightImpact();
-                _moveToLocation(location.point);
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            const Color(0xFFEF4444).withOpacity(0.1),
-                            const Color(0xFFDC2626).withOpacity(0.1),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Icon(
-                        Icons.bloodtype_rounded,
-                        color: Color(0xFFEF4444),
-                        size: 28,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            location.locationName,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E293B),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            location.address,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          if (_currentPosition != null) ...[
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.near_me_rounded,
-                                  size: 14,
-                                  color: Colors.grey[500],
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '${distance.toStringAsFixed(1)} km',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[500],
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   void _showLocationDetails(LocationModel location) {
     final distance = _calculateDistance(location.latitude, location.longitude);
 
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) => Container(
         decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -626,39 +626,40 @@ class _MapScreenState extends State<MapScreen> {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
                     color: const Color(0xFFEF4444).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
-                    Icons.bloodtype_rounded,
+                    Icons.bloodtype,
                     color: Color(0xFFEF4444),
                     size: 24,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     location.locationName,
                     style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E293B),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF111827),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            _buildDetailRow(Icons.location_on_rounded, location.address),
-            _buildDetailRow(Icons.location_city_rounded, location.city),
+            const SizedBox(height: 20),
+            _buildDetailRow(Icons.location_on, location.address),
+            _buildDetailRow(Icons.location_city, location.city),
             if (_currentPosition != null)
               _buildDetailRow(
-                Icons.near_me_rounded,
+                Icons.near_me,
                 '${distance.toStringAsFixed(1)} km dari lokasi Anda',
               ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -671,7 +672,7 @@ class _MapScreenState extends State<MapScreen> {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 0,
                 ),
@@ -692,7 +693,7 @@ class _MapScreenState extends State<MapScreen> {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.grey[600]),
+          Icon(icon, size: 18, color: Colors.grey[600]),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
