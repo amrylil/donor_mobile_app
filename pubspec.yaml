@@ -43,6 +43,7 @@ dependencies:
   geolocator: ^14.0.2
   flutter_secure_storage: ^9.0.0
   flutter_dotenv: ^5.1.0
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +70,7 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/icons/
   fonts:
     - family: Jost
       fonts:

@@ -90,7 +90,7 @@ class _MainScreenState extends State<MainScreen> {
                   children: [
                     // App name section
                     const Text(
-                      'Darah Sipatuo',
+                      'DARAH SIPATUO',
                       style: TextStyle(
                         color: Color(0xFF1F2937),
                         fontSize: 20,
@@ -129,23 +129,6 @@ class _MainScreenState extends State<MainScreen> {
                                   ),
                                 ),
                               ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              // Settings action
-                            },
-                            icon: const Icon(
-                              Icons.settings_rounded,
-                              color: Color(0xFF6B7280),
-                              size: 22,
                             ),
                           ),
                         ),

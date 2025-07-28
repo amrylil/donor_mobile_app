@@ -9,35 +9,27 @@ class BloodDonationHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 1. Modern Header Section
-              _buildModernHeaderSection(context, textTheme),
+    // Langsung kembalikan kontennya, tanpa Scaffold dan SafeArea
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. Modern Header Section
+          _buildModernHeaderSection(context, textTheme),
 
-              // 3. Modern Quick Actions
-              _buildModernQuickActionsSection(textTheme),
+          // 3. Modern Quick Actions
+          _buildModernQuickActionsSection(textTheme),
 
-              // 4. Urgent Need Card
-              _buildModernUrgentNeedSection(textTheme),
+          // 4. Urgent Need Card
+          _buildModernUrgentNeedSection(textTheme),
+          _buildModernSchedulesSection(textTheme),
 
-              // 5. Schedules Section
-              _buildModernSchedulesSection(textTheme),
+          _buildModernEducationSection(textTheme),
 
-              // 6. Education Section
-              _buildModernEducationSection(textTheme),
+          _buildModernCallToActionSection(textTheme),
 
-              // 7. Call to Action
-              _buildModernCallToActionSection(textTheme),
-
-              const SizedBox(height: 32),
-            ],
-          ),
-        ),
+          const SizedBox(height: 32),
+        ],
       ),
     );
   }

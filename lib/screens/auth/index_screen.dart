@@ -1,16 +1,17 @@
+import 'package:donor_mobile_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // Jika logo Anda SVG
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AuthIndexPage extends StatelessWidget {
   const AuthIndexPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil tema teks dari context (pastikan font 'Jost' sudah diatur di main.dart)
     final textTheme = Theme.of(context).textTheme;
+    // Membuat instance dari AuthService untuk digunakan di dalam UI
+    final AuthService authService = AuthService();
 
     return Scaffold(
-      // Latar belakang diubah menjadi putih
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
@@ -23,14 +24,12 @@ class AuthIndexPage extends StatelessWidget {
               Column(
                 children: [
                   Transform.translate(
-                    offset: Offset(0, -15), // naik 20 pixel
+                    offset: const Offset(0, -15),
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.center, // atau sesuai kebutuhan
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           "DARAH",
-
                           style: textTheme.headlineMedium?.copyWith(
                             color: Colors.black87,
                             fontSize: 30,
@@ -50,56 +49,115 @@ class AuthIndexPage extends StatelessWidget {
                   ),
                 ],
               ),
-
               const Spacer(flex: 2),
-
-              const SizedBox(height: 10),
               Text(
                 'Berbagi Darah',
-                style: textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600], // Warna diubah
-                ),
+                style: textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
               ),
               Text(
                 'Menyatukan Sesama Manusia',
-                style: textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600], // Warna diubah
-                ),
+                style: textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
               ),
-
               const SizedBox(height: 30),
 
+              // === TOMBOL UTAMA SEKARANG UNTUK GOOGLE ===
               _buildPrimaryButton(
-                text: 'Lanjutkan dengan Facebook',
-                icon: Icons.facebook,
-                onPressed: () {},
+                text: 'Lanjutkan dengan Google',
+                icon: SvgPicture.asset(
+                  'assets/icons/google.svg',
+                  height: 22, // Sesuaikan ukuran ikon jika perlu
+                  width: 22,
+                  // Mengubah warna ikon SVG menjadi putih agar kontras
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                onPressed: () async {
+                  // Menampilkan loading indicator
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Mencoba masuk dengan Google...'),
+                      duration: Duration(seconds: 4),
+                    ),
+                  );
+
+                  final String? sessionToken = await authService
+                      .signInWithGoogle();
+
+                  if (!context.mounted) return; // Pastikan widget masih ada
+
+                  if (sessionToken != null) {
+                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.green,
+                        content: Text('Login dengan Google berhasil!'),
+                      ),
+                    );
+                    Navigator.pushReplacementNamed(context, '/');
+                  } else {
+                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text(
+                          'Gagal login dengan Google. Silakan coba lagi.',
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
-
               const SizedBox(height: 20),
-
               _buildSecondaryButton(
                 text: 'Gunakan email atau telepon',
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/register');
                 },
               ),
-
               const SizedBox(height: 40),
 
-              // --- Ikon Social Media Lainnya ---
+              // === IKON SOSIAL MEDIA SEKARANG ADA FACEBOOK ===
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildSocialIcon('assets/icons/twitter.svg'), // Ganti path
+                  _buildSocialIcon(
+                    'assets/icons/twitter.svg',
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Fitur login Twitter belum tersedia.'),
+                        ),
+                      );
+                    },
+                  ),
                   const SizedBox(width: 24),
-                  _buildSocialIcon('assets/icons/google.svg'), // Ganti path
+                  // Facebook sekarang di sini
+                  _buildSocialIcon(
+                    'assets/icons/facebook.svg',
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Fitur login Facebook belum tersedia.'),
+                        ),
+                      );
+                    },
+                  ),
                   const SizedBox(width: 24),
-                  _buildSocialIcon('assets/icons/linkedin.svg'), // Ganti path
+                  _buildSocialIcon(
+                    'assets/icons/linkedln.svg',
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Fitur login LinkedIn belum tersedia.'),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
-
               const Spacer(flex: 3),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -107,7 +165,7 @@ class AuthIndexPage extends StatelessWidget {
                     'Sudah punya akun? ',
                     style: textTheme.bodyMedium?.copyWith(
                       color: Colors.grey[600],
-                    ), // Warna diubah
+                    ),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -116,7 +174,7 @@ class AuthIndexPage extends StatelessWidget {
                     child: Text(
                       'Masuk',
                       style: textTheme.bodyMedium?.copyWith(
-                        color: Colors.red[700], // Warna diubah
+                        color: Colors.red[700],
                         fontWeight: FontWeight.bold,
                         decoration: TextDecoration.underline,
                         decorationColor: Colors.red[700],
@@ -133,10 +191,11 @@ class AuthIndexPage extends StatelessWidget {
     );
   }
 
-  // Helper widget untuk tombol utama
+  // Helper widget untuk tombol utama - DIMODIFIKASI
   Widget _buildPrimaryButton({
     required String text,
-    required IconData icon,
+    required Widget
+    icon, // Diubah dari IconData menjadi Widget agar lebih fleksibel
     VoidCallback? onPressed,
   }) {
     return Container(
@@ -158,7 +217,7 @@ class AuthIndexPage extends StatelessWidget {
       ),
       child: ElevatedButton.icon(
         onPressed: onPressed,
-        icon: Icon(icon, color: Colors.white),
+        icon: icon, // Langsung menggunakan widget ikon yang diberikan
         label: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
@@ -186,8 +245,8 @@ class AuthIndexPage extends StatelessWidget {
         child: Text(text),
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          foregroundColor: Colors.grey[800], // Warna diubah
-          side: BorderSide(color: Colors.grey[400]!), // Warna diubah
+          foregroundColor: Colors.grey[800],
+          side: BorderSide(color: Colors.grey[400]!),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
@@ -197,18 +256,18 @@ class AuthIndexPage extends StatelessWidget {
   }
 
   // Helper widget untuk ikon sosial media
-  Widget _buildSocialIcon(String assetPath) {
-    return CircleAvatar(
-      radius: 20,
-      backgroundColor: Colors.grey[200], // Warna diubah
-      child: SvgPicture.asset(
-        assetPath,
-        width: 20,
-        height: 20,
-        colorFilter: ColorFilter.mode(
-          Colors.grey[800]!,
-          BlendMode.srcIn,
-        ), // Warna diubah
+  Widget _buildSocialIcon(String assetPath, {VoidCallback? onPressed}) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: CircleAvatar(
+        radius: 20,
+        backgroundColor: Colors.grey[200],
+        child: SvgPicture.asset(
+          assetPath,
+          width: 20,
+          height: 20,
+          colorFilter: ColorFilter.mode(Colors.grey[800]!, BlendMode.srcIn),
+        ),
       ),
     );
   }

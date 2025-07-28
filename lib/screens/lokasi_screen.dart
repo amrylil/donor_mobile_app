@@ -92,46 +92,43 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: SafeArea(
-        child: FutureBuilder<List<LocationModel>>(
-          future: _locationsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return _buildLoadingState();
-            }
+    // Langsung kembalikan FutureBuilder sebagai widget utama
+    return FutureBuilder<List<LocationModel>>(
+      future: _locationsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingState();
+        }
 
-            if (snapshot.hasError) {
-              return _buildErrorState(snapshot.error.toString());
-            }
+        if (snapshot.hasError) {
+          return _buildErrorState(snapshot.error.toString());
+        }
 
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return _buildEmptyState();
-            }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return _buildEmptyState();
+        }
 
-            final locations = snapshot.data!;
-            final markers = _buildMarkers(locations);
+        final locations = snapshot.data!;
+        final markers = _buildMarkers(locations);
 
-            return Stack(
-              children: [
-                // Map Container - Full Screen
-                _buildMapView(markers),
+        return Stack(
+          children: [
+            // Map Container - Full Screen
+            _buildMapView(markers),
 
-                // Top Controls
-                _buildTopControls(),
+            // Top Controls
+            _buildTopControls(),
 
-                // Bottom Sheet Toggle
-                _buildBottomToggle(locations.length),
+            // Bottom Sheet Toggle
+            _buildBottomToggle(locations.length),
 
-                // Location List Overlay
-                if (_showList) _buildLocationListOverlay(locations),
-              ],
-            );
-          },
-        ),
-      ),
+            // Location List Overlay
+            if (_showList) _buildLocationListOverlay(locations),
+          ],
+        );
+      },
     );
   }
 
