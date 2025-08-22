@@ -1,6 +1,7 @@
+import 'package:provider/provider.dart';
+import 'package:donor_mobile_app/providers/auth_provider.dart';
 import 'package:donor_mobile_app/helpers/auth_guard.dart';
-import 'package:donor_mobile_app/screens/onboarding_screen.dart';
-import 'package:donor_mobile_app/screens/splash_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:donor_mobile_app/widgets/main_navigation.dart';
@@ -9,8 +10,15 @@ import 'package:donor_mobile_app/screens/auth/register_screen.dart';
 import 'package:donor_mobile_app/screens/auth/index_screen.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -25,7 +33,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const OnboardingScreen(),
+      home: const AuthGuard(),
+
       routes: {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),

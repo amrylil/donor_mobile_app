@@ -21,17 +21,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil tema teks dari context, yang sekarang sudah menggunakan font 'Jost'
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      // backgroundColor sudah diatur di theme, tapi bisa di-override di sini jika perlu
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
-              // --- Shadow untuk Blob ---
               Positioned(
                 top: -120,
                 right: -15,
@@ -42,7 +40,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     width: 360,
                     height: 390,
                     fit: BoxFit.contain,
-                    // Warna shadow diubah menjadi gelap
                     colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.3),
                       BlendMode.srcIn,
@@ -51,7 +48,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
 
-              // --- Blob Utama ---
               Positioned(
                 top: -130,
                 right: -20,
@@ -63,10 +59,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
 
-              // --- Konten Utama ---
               SafeArea(
                 child: Padding(
-                  // Memberikan margin horizontal 32 dan vertikal 24
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32.0,
                     vertical: 24.0,
@@ -74,27 +68,36 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 20),
 
-                      // Teks Welcome untuk Register
-                      Text(
-                        'Bergabung,',
-                        style: textTheme.headlineSmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
+                      Transform.translate(
+                        offset: Offset(-17, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                          children: [
+                            Text(
+                              'Bergabung,',
+                              style: textTheme.headlineSmall?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 25,
+                              ),
+                            ),
+                            Text(
+                              'Daftar!',
+                              style: textTheme.displaySmall?.copyWith(
+                                color: Colors.white,
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        'Daftar!',
-                        style: textTheme.displaySmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
 
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 120),
 
-                      // Input field untuk Nama Lengkap
                       _buildTextField(
                         label: 'NAMA LENGKAP',
                         hint: 'Masukkan nama lengkap',
@@ -104,7 +107,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 20),
 
-                      // Input field untuk Email
                       _buildTextField(
                         label: 'ALAMAT EMAIL',
                         hint: 'nama@email.com',
@@ -114,7 +116,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 20),
 
-                      // Input field untuk Password
                       _buildTextField(
                         label: 'KATA SANDI',
                         hint: '••••••••••',
@@ -162,12 +163,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 30),
 
-                      // Tombol Register
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-
-                          // Warna gradient tombol diubah menjadi merah
                           gradient: const LinearGradient(
                             colors: [Color(0xFFF87171), Color(0xFFDC2626)],
                             begin: Alignment.topLeft,
@@ -175,11 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         child: ElevatedButton(
-                          onPressed: _agreeToTerms
-                              ? () {
-                                  // Tambahkan logika register di sini
-                                }
-                              : null,
+                          onPressed: _agreeToTerms ? () {} : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,
@@ -187,7 +181,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            disabledBackgroundColor: Colors.grey[400],
+                            disabledBackgroundColor: Colors.redAccent,
                           ),
                           child: SizedBox(
                             width: double.infinity,
@@ -204,7 +198,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 5),
 
                       Center(
                         child: Row(

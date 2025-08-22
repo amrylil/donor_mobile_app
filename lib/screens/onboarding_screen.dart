@@ -18,17 +18,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<OnboardPageData> pages = [
     OnboardPageData(
-      title: 'Find Blood Donors',
+      title: 'Cari Pendonor Darah',
       description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Arcu tristique tristique quam in.',
+          'Temukan pendonor darah terdekat dengan cepat dan mudah untuk membantu mereka yang membutuhkan.',
       image: 'assets/images/icon.svg',
       isNetwork: true,
     ),
     OnboardPageData(
-      title: 'Post A Blood Request',
+      title: 'Buat Permintaan Darah',
       description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Arcu tristique tristique quam in.',
-      image: 'assets/images/icon2.svg ',
+          'Ajukan permintaan darah hanya dengan beberapa langkah, dan biarkan komunitas membantu Anda.',
+      image: 'assets/images/icon2.svg',
       isNetwork: true,
     ),
   ];

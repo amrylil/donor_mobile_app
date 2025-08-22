@@ -1,3 +1,4 @@
+import 'package:donor_mobile_app/screens/auth/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:ui';
@@ -47,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
@@ -88,18 +90,29 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 30),
-                      Text(
-                        'Selamat Datang,',
-                        style: textTheme.headlineSmall?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        'Masuk!',
-                        style: textTheme.displaySmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                      const SizedBox(height: 15),
+                      Transform.translate(
+                        offset: const Offset(-17, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                          children: [
+                            Text(
+                              'Selamat Datang,',
+                              style: textTheme.headlineSmall?.copyWith(
+                                color: Colors.white,
+                                fontSize: 25,
+                              ),
+                            ),
+                            Text(
+                              'Masuk!',
+                              style: textTheme.displaySmall?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 40,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 150),
@@ -157,24 +170,12 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 10),
 
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.red.withOpacity(0.4),
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFF87171), Color(0xFFDC2626)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
+                          color: Colors.redAccent,
                         ),
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _handleLogin,
@@ -202,6 +203,42 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                             ),
                           ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Anda belum punya akun?",
+                              style: TextStyle(fontSize: 13),
+                            ),
+
+                            const SizedBox(width: 5),
+
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RegisterPage(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                "Register",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Colors.redAccent, // warna biru mirip link
+                                  decoration: TextDecoration
+                                      .none, // hilangkan underline
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

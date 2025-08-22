@@ -1,25 +1,7 @@
 <svg id="visual" viewBox="0 0 900 600" width="900" height="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
-  <defs>
-    <linearGradient id="modernRedGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
-      <stop offset="25%" style="stop-color:#FF5252;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#F44336;stop-opacity:1" />
-      <stop offset="75%" style="stop-color:#E53935;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#C62828;stop-opacity:1" />
-    </linearGradient>
-    
-    <!-- Alternative gradient with more vibrant modern colors -->
-    <radialGradient id="vibrantRedGradient" cx="30%" cy="30%" r="80%">
-      <stop offset="0%" style="stop-color:#FF6B9D;stop-opacity:1" />
-      <stop offset="30%" style="stop-color:#FF4757;stop-opacity:1" />
-      <stop offset="60%" style="stop-color:#FF3742;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#C44569;stop-opacity:1" />
-    </radialGradient>
-  </defs>
-  
   <g transform="translate(590.9673547730035 409.6179355829847)">
     <path d="M83.7 -121.9C124 -43.4 183 -21.7 205.6 22.6C228.3 66.9 214.5 133.9 174.2 133.9C133.9 133.9 66.9 66.9 -10.4 77.3C-87.7 87.7 -175.4 175.4 -275.4 175.4C-375.4 175.4 -487.7 87.7 -497.7 -10C-507.7 -107.7 -415.4 -215.4 -315.4 -293.9C-215.4 -372.4 -107.7 -421.7 -43 -378.7C21.7 -335.7 43.4 -200.4 83.7 -121.9" 
-          fill="url(#vibrantRedGradient)" 
+          fill="#E53935" 
           opacity="0.9">
     </path>
   </g>

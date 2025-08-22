@@ -8,7 +8,6 @@ class AuthIndexPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    // Membuat instance dari AuthService untuk digunakan di dalam UI
     final AuthService authService = AuthService();
 
     return Scaffold(
@@ -24,24 +23,16 @@ class AuthIndexPage extends StatelessWidget {
               Column(
                 children: [
                   Transform.translate(
-                    offset: const Offset(0, -15),
+                    offset: const Offset(0, -5),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "DARAH",
+                          "DONORQ",
                           style: textTheme.headlineMedium?.copyWith(
                             color: Colors.black87,
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'SIPATUO',
-                          style: textTheme.titleLarge?.copyWith(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.normal,
-                            letterSpacing: 1,
                           ),
                         ),
                       ],
@@ -60,21 +51,18 @@ class AuthIndexPage extends StatelessWidget {
               ),
               const SizedBox(height: 30),
 
-              // === TOMBOL UTAMA SEKARANG UNTUK GOOGLE ===
               _buildPrimaryButton(
                 text: 'Lanjutkan dengan Google',
                 icon: SvgPicture.asset(
                   'assets/icons/google.svg',
-                  height: 22, // Sesuaikan ukuran ikon jika perlu
+                  height: 22,
                   width: 22,
-                  // Mengubah warna ikon SVG menjadi putih agar kontras
                   colorFilter: const ColorFilter.mode(
                     Colors.white,
                     BlendMode.srcIn,
                   ),
                 ),
                 onPressed: () async {
-                  // Menampilkan loading indicator
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Mencoba masuk dengan Google...'),
@@ -85,8 +73,7 @@ class AuthIndexPage extends StatelessWidget {
                   final String? sessionToken = await authService
                       .signInWithGoogle();
 
-                  if (!context.mounted) return; // Pastikan widget masih ada
-
+                  if (!context.mounted) return;
                   if (sessionToken != null) {
                     ScaffoldMessenger.of(context).removeCurrentSnackBar();
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -118,7 +105,6 @@ class AuthIndexPage extends StatelessWidget {
               ),
               const SizedBox(height: 40),
 
-              // === IKON SOSIAL MEDIA SEKARANG ADA FACEBOOK ===
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

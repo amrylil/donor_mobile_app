@@ -3,7 +3,6 @@ import 'package:donor_mobile_app/screens/lokasi_screen.dart';
 import 'package:donor_mobile_app/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
-// Halaman dummy untuk contoh
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
   @override
@@ -14,7 +13,6 @@ class ChatPage extends StatelessWidget {
   }
 }
 
-// Widget utama yang memiliki state
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -25,7 +23,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // Daftar halaman/widget sesuai dengan urutan ikon di nav bar
   static const List<Widget> _widgetOptions = <Widget>[
     BloodDonationHomeScreen(),
     MapScreen(),
@@ -40,13 +37,13 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color.fromARGB(255, 233, 233, 233),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight + 10),
-        child:
-            CustomAppBar(), // AppBar dibuat menjadi widget terpisah agar rapi
+        child: CustomAppBar(),
       ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
@@ -55,12 +52,17 @@ class _MainScreenState extends State<MainScreen> {
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xFFE72929),
-        shape: const CircleBorder(),
-        child: const Icon(Icons.water_drop, color: Colors.white),
-        elevation: 2.0,
+
+      floatingActionButton: SizedBox(
+        height: 60.0,
+        width: 60.0,
+        child: FloatingActionButton(
+          onPressed: () {},
+          backgroundColor: const Color(0xFFE72929),
+          shape: const CircleBorder(),
+          child: const Icon(Icons.water_drop, color: Colors.white, size: 35),
+          elevation: 2.0,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: CustomBottomAppBar(
@@ -71,7 +73,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-// Custom AppBar dipisahkan agar MainScreen lebih bersih
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({super.key});
 
@@ -96,7 +97,7 @@ class CustomAppBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'DARAH SIPATUO',
+                'DonorQ',
                 style: TextStyle(
                   color: Color(0xFF1F2937),
                   fontSize: 20,
@@ -142,7 +143,6 @@ class CustomAppBar extends StatelessWidget {
   }
 }
 
-// Model data yang lebih baik untuk item navigasi
 class NavItem {
   final IconData activeIcon;
   final IconData inactiveIcon;
@@ -168,7 +168,6 @@ class CustomBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Menggunakan model data yang lebih baik untuk ikon aktif/non-aktif
     final List<NavItem> navItems = [
       NavItem(activeIcon: Icons.home, inactiveIcon: Icons.home_outlined),
       NavItem(activeIcon: Icons.search, inactiveIcon: Icons.search_outlined),
@@ -181,13 +180,13 @@ class CustomBottomAppBar extends StatelessWidget {
     ];
 
     return BottomAppBar(
-      shape: const CircularNotchedRectangle(), // Ini yang membuat lekukan
-      notchMargin: 8.0,
-      color: const Color.fromRGBO(255, 255, 255, 1),
-      elevation: 4.0,
+      shape: const CircularNotchedRectangle(),
+      notchMargin: 7.0,
+      color: const Color.fromARGB(255, 255, 255, 255),
+      elevation: 1.0,
       shadowColor: Colors.black,
       child: SizedBox(
-        height: 60,
+        height: 50,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -215,9 +214,7 @@ class CustomBottomAppBar extends StatelessWidget {
     final color = isSelected ? const Color(0xFFE72929) : Colors.grey[400];
 
     return SizedBox(
-      width:
-          MediaQuery.of(context).size.width /
-          5, // Membagi lebar layar secara adil
+      width: MediaQuery.of(context).size.width / 5,
       child: InkWell(
         onTap: () => onItemTapped(index),
         borderRadius: BorderRadius.circular(30), // Efek ripple yang rapi

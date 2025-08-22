@@ -1,3 +1,4 @@
+import 'package:donor_mobile_app/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:donor_mobile_app/screens/auth/index_screen.dart';
@@ -25,9 +26,9 @@ class AuthGuard extends StatelessWidget {
         }
 
         if (snapshot.data == true) {
-          return const MainScreen(); // ke home
+          return const MainScreen();
         } else {
-          return const AuthIndexPage(); // ke halaman auth
+          return const OnboardingScreen();
         }
       },
     );
