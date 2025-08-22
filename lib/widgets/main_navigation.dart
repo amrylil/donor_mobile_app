@@ -2,35 +2,14 @@ import 'package:donor_mobile_app/screens/home_screen.dart';
 import 'package:donor_mobile_app/screens/lokasi_screen.dart';
 import 'package:donor_mobile_app/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'dart:math' as math;
 
-class FavoritesPage extends StatelessWidget {
-  const FavoritesPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Halaman Favorit', style: TextStyle(fontSize: 24)),
-    );
-  }
-}
-
+// Halaman dummy untuk contoh
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
   @override
   Widget build(BuildContext context) {
     return const Center(
       child: Text('Halaman Pesan', style: TextStyle(fontSize: 24)),
-    );
-  }
-}
-
-class FolderPage extends StatelessWidget {
-  const FolderPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Halaman Folder', style: TextStyle(fontSize: 24)),
     );
   }
 }
@@ -46,14 +25,13 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
+  // Daftar halaman/widget sesuai dengan urutan ikon di nav bar
   static const List<Widget> _widgetOptions = <Widget>[
     BloodDonationHomeScreen(),
     MapScreen(),
     ChatPage(),
     ProfileScreen(),
   ];
-
-  // Daftar title untuk setiap halaman
 
   void _onItemTapped(int index) {
     setState(() {
@@ -65,96 +43,27 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      body: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.9),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 10,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // App name section
-                    const Text(
-                      'DARAH SIPATUO',
-                      style: TextStyle(
-                        color: Color(0xFF1F2937),
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    // Action buttons
-                    Row(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              // Notifikasi action
-                            },
-                            icon: Stack(
-                              children: [
-                                const Icon(
-                                  Icons.notifications_rounded,
-                                  color: Color(0xFF6B7280),
-                                  size: 22,
-                                ),
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFEF4444),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // Body content
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              child: Container(
-                key: ValueKey<int>(_selectedIndex),
-                child: _widgetOptions.elementAt(_selectedIndex),
-              ),
-            ),
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight + 10),
+        child:
+            CustomAppBar(), // AppBar dibuat menjadi widget terpisah agar rapi
       ),
-      bottomNavigationBar: FloatingNavBar(
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: Container(
+          key: ValueKey<int>(_selectedIndex),
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: const Color(0xFFE72929),
+        shape: const CircleBorder(),
+        child: const Icon(Icons.water_drop, color: Colors.white),
+        elevation: 2.0,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: CustomBottomAppBar(
         currentIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ),
@@ -162,18 +71,96 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
+// Custom AppBar dipisahkan agar MainScreen lebih bersih
+class CustomAppBar extends StatelessWidget {
+  const CustomAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'DARAH SIPATUO',
+                style: TextStyle(
+                  color: Color(0xFF1F2937),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Stack(
+                    clipBehavior: Clip.none, // Agar notifikasi tidak terpotong
+                    children: [
+                      const Icon(
+                        Icons.notifications_outlined,
+                        color: Color(0xFF6B7280),
+                        size: 24,
+                      ),
+                      Positioned(
+                        top: -2,
+                        right: -2,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFEF4444),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Model data yang lebih baik untuk item navigasi
 class NavItem {
   final IconData activeIcon;
   final IconData inactiveIcon;
-  NavItem({required this.activeIcon, required this.inactiveIcon});
+  final bool hasNotification;
+
+  NavItem({
+    required this.activeIcon,
+    required this.inactiveIcon,
+    this.hasNotification = false,
+  });
 }
 
-// Widget diubah menjadi StatelessWidget yang lebih ringan
-class FloatingNavBar extends StatelessWidget {
+// WIDGET BOTTOM NAVIGATION BAR YANG SUDAH DIPERBAIKI TOTAL
+class CustomBottomAppBar extends StatelessWidget {
   final Function(int) onItemTapped;
   final int currentIndex;
 
-  const FloatingNavBar({
+  const CustomBottomAppBar({
     Key? key,
     required this.onItemTapped,
     required this.currentIndex,
@@ -181,69 +168,86 @@ class FloatingNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Menggunakan model data yang lebih baik untuk ikon aktif/non-aktif
     final List<NavItem> navItems = [
+      NavItem(activeIcon: Icons.home, inactiveIcon: Icons.home_outlined),
+      NavItem(activeIcon: Icons.search, inactiveIcon: Icons.search_outlined),
       NavItem(
-        activeIcon: Icons.home_rounded,
-        inactiveIcon: Icons.home_outlined,
+        activeIcon: Icons.show_chart,
+        inactiveIcon: Icons.show_chart_outlined,
+        hasNotification: true,
       ),
-      NavItem(
-        activeIcon: Icons.location_on_rounded,
-        inactiveIcon: Icons.location_on_outlined,
-      ),
-      NavItem(
-        activeIcon: Icons.chat_bubble_rounded,
-        inactiveIcon: Icons.chat_bubble_outline_rounded,
-      ),
-      NavItem(
-        activeIcon: Icons.person_rounded,
-        inactiveIcon: Icons.person_rounded,
-      ),
+      NavItem(activeIcon: Icons.person, inactiveIcon: Icons.person_outline),
     ];
 
-    // Menggunakan Container sederhana sebagai dasar
-    return Container(
-      height: 80, // Tinggi nav bar
-      decoration: BoxDecoration(
-        color: Colors.white,
-        // Sudut membulat hanya di bagian atas
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -5), // Shadow hanya ke arah atas
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false, // SafeArea hanya untuk bagian bawah
+    return BottomAppBar(
+      shape: const CircularNotchedRectangle(), // Ini yang membuat lekukan
+      notchMargin: 8.0,
+      color: const Color.fromRGBO(255, 255, 255, 1),
+      elevation: 4.0,
+      shadowColor: Colors.black,
+      child: SizedBox(
+        height: 60,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(navItems.length, (index) {
-            bool isSelected = currentIndex == index;
-            final color = isSelected
-                ? const Color.fromARGB(255, 231, 41, 41)
-                : Colors.grey[400];
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            // Grup ikon di sebelah KIRI
+            Row(
+              children: [
+                _buildNavItem(context, navItems[0], 0),
+                _buildNavItem(context, navItems[1], 1),
+              ],
+            ),
+            Row(
+              children: [
+                _buildNavItem(context, navItems[2], 2),
+                _buildNavItem(context, navItems[3], 3),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-            return Expanded(
-              child: GestureDetector(
-                onTap: () => onItemTapped(index),
-                behavior: HitTestBehavior.translucent,
-                child: Center(
-                  child: Icon(
-                    isSelected
-                        ? navItems[index].activeIcon
-                        : navItems[index].inactiveIcon,
-                    color: color,
-                    size: 28,
-                  ),
+  Widget _buildNavItem(BuildContext context, NavItem item, int index) {
+    bool isSelected = currentIndex == index;
+    final color = isSelected ? const Color(0xFFE72929) : Colors.grey[400];
+
+    return SizedBox(
+      width:
+          MediaQuery.of(context).size.width /
+          5, // Membagi lebar layar secara adil
+      child: InkWell(
+        onTap: () => onItemTapped(index),
+        borderRadius: BorderRadius.circular(30), // Efek ripple yang rapi
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  isSelected ? item.activeIcon : item.inactiveIcon,
+                  color: color,
+                  size: 28,
                 ),
-              ),
-            );
-          }),
+                if (item.hasNotification)
+                  Positioned(
+                    top: -2,
+                    right: -2,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFE72929),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
         ),
       ),
     );

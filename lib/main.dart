@@ -1,4 +1,6 @@
 import 'package:donor_mobile_app/helpers/auth_guard.dart';
+import 'package:donor_mobile_app/screens/onboarding_screen.dart';
+import 'package:donor_mobile_app/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:donor_mobile_app/widgets/main_navigation.dart';
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const AuthGuard(),
+      home: const OnboardingScreen(),
       routes: {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
